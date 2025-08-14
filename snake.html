@@ -157,10 +157,20 @@
             }
 
             function generateFood() {
-                food = {
-                    x: Math.floor(Math.random() * GRID_SIZE),
-                    y: Math.floor(Math.random() * GRID_SIZE)
-                };
+                let food_on_snake;
+                do {
+                    food_on_snake = false;
+                    food = {
+                        x: Math.floor(Math.random() * GRID_SIZE),
+                        y: Math.floor(Math.random() * GRID_SIZE)
+                    };
+                    for (const segment of snake) {
+                        if (segment.x === food.x && segment.y === food.y) {
+                            food_on_snake = true;
+                            break;
+                        }
+                    }
+                } while (food_on_snake);
             }
 
             function draw() {
