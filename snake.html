@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Snake Game</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" xintegrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ94BQsW6J9yH6pM9F8k2eF2F4b78m0a8F771r7P7C5t15s15J5b3a3t7t5P5f5f" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="./dist/output.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
         body {
@@ -103,10 +103,20 @@
 <body class="bg-gray-900 flex flex-col items-center justify-center min-h-screen p-4">
     <div class="game-info">
         <h1 class="text-3xl sm:text-4xl text-yellow-400 mb-2">Snake Game</h1>
+        <p id="playerNameDisplay" class="text-lg sm:text-xl text-yellow-200"></p>
         <p id="score" class="text-lg sm:text-xl text-yellow-200">Score: 0</p>
     </div>
     <div class="relative w-full max-w-lg mx-auto mt-24">
         <canvas id="gameCanvas" class="w-full aspect-square"></canvas>
+        <div id="loginOverlay" class="absolute inset-0 z-20 flex items-center justify-center">
+            <div class="bg-gray-800 bg-opacity-90 rounded-xl p-8 text-center border-4 border-yellow-400 shadow-2xl">
+                <h2 class="text-3xl sm:text-4xl text-yellow-400 font-bold mb-4">Enter Your Name</h2>
+                <input type="text" id="playerNameInput" class="bg-gray-700 text-white w-full py-2 px-4 rounded-lg mb-4" placeholder="Player">
+                <button id="startGameBtn" class="bg-yellow-400 text-gray-900 font-bold py-3 px-6 rounded-full text-lg sm:text-xl shadow-lg hover:bg-yellow-500 transition-colors duration-200">
+                    Start Game
+                </button>
+            </div>
+        </div>
         <div id="overlay" class="absolute inset-0 z-10 hidden items-center justify-center">
             <div class="bg-gray-800 bg-opacity-90 rounded-xl p-8 text-center border-4 border-yellow-400 shadow-2xl">
                 <h2 id="overlay-text" class="text-4xl sm:text-5xl text-yellow-400 font-bold mb-4">Game Over</h2>
@@ -130,6 +140,10 @@
             const canvas = document.getElementById('gameCanvas');
             const ctx = canvas.getContext('2d');
             const scoreDisplay = document.getElementById('score');
+            const playerNameDisplay = document.getElementById('playerNameDisplay');
+            const loginOverlay = document.getElementById('loginOverlay');
+            const playerNameInput = document.getElementById('playerNameInput');
+            const startGameBtn = document.getElementById('startGameBtn');
             const overlay = document.getElementById('overlay');
             const overlayText = document.getElementById('overlay-text');
             const restartBtn = document.getElementById('restartBtn');
@@ -141,18 +155,18 @@
             };
             const GRID_SIZE = 20;
             const TILE_SIZE = 20;
-            let snake, food, direction, score, gameState;
+            let snake, food, direction, score, gameState, playerName;
 
             function initializeGame() {
                 snake = [{ x: 10, y: 10 }];
                 food = {};
                 direction = { x: 0, y: 0 };
                 score = 0;
-                gameState = 'paused';
+                gameState = 'login';
                 scoreDisplay.textContent = `Score: ${score}`;
                 generateFood();
-                overlayText.textContent = 'Press Any Arrow Key to Start';
-                overlay.style.display = 'flex';
+                overlay.style.display = 'none';
+                loginOverlay.style.display = 'flex';
                 restartBtn.style.display = 'none';
             }
 
@@ -298,6 +312,18 @@
             document.addEventListener('keydown', handleInput);
             restartBtn.addEventListener('click', () => {
                 initializeGame();
+            });
+
+            startGameBtn.addEventListener('click', () => {
+                playerName = playerNameInput.value.trim();
+                if (playerName === '') {
+                    playerName = 'Player';
+                }
+                playerNameDisplay.textContent = `Player: ${playerName}`;
+                loginOverlay.style.display = 'none';
+                overlayText.textContent = 'Press Any Arrow Key to Start';
+                overlay.style.display = 'flex';
+                gameState = 'paused';
             });
 
             resizeCanvas();
